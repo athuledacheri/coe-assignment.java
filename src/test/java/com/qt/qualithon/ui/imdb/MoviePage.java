@@ -73,6 +73,33 @@ public class MoviePage extends Page{
      **/
     public List<String> genres(){
         List<String> genres = new ArrayList<>();
+        List<WebElement> credits = this.testSession.driverWait().until(
+                ExpectedConditions.presenceOfAllElementsLocatedBy(
+                  By.cssSelector("li.ipc-metadata-list__item")));
+
+            // traverse credits sections to find the section with Writers
+            for(WebElement credit:credits){
+                try{
+                    if(credit.findElement(By.cssSelector("span")).getText().equalsIgnoreCase("genres")){
+                        // traverse list of writers on page to add to writers list
+                        List<WebElement> writersElements = credit.findElements(By.cssSelector("a"));
+//                       for(int i = writersElements.size(); i >0 ; i++){
+                        for(int i =0 ; i <writersElements.size() ; i++)
+                        {
+                            genres.add(writersElements.get(i).getText());
+                        }
+                    
+                        break;
+                    }
+                    
+                    
+                    
+                    
+                }catch(NoSuchElementException e){}
+            }
+            
+            
+
         
         // if genres list is empty throw exception
         if(genres.isEmpty()){
@@ -89,12 +116,14 @@ public class MoviePage extends Page{
     public String releaseYear(){
         return this.testSession.driverWait().until(
             ExpectedConditions.presenceOfElementLocated(
-                By.cssSelector("ul[data-testid='hero-title-block__metadata']")
+                By.cssSelector("div[class='sc-80d4314-0 fjPRnj'] li:nth-child(1)")
             ) 
         ).getText();
     }
 
     /**
+     * //span[normalize-space()='2012']
+     * //div[@class='sc-80d4314-0 fjPRnj']
      * get list of movie writers
      *
      * @return    list of movie writer names
@@ -110,12 +139,27 @@ public class MoviePage extends Page{
             try{
                 if(credit.findElement(By.cssSelector("span")).getText().equalsIgnoreCase("Writers")){
                     // traverse list of writers on page to add to writers list
-                    List<WebElement> writersElements = credit.findElements(By.cssSelector("a"));
-                    for(int i = writersElements.size()-1; i >= 0 ; i--){
+                    List<WebElement> writersElements = credit.findElements(By.cssSelector("a"));               
+                    for(int i =0 ; i <writersElements.size() ; i++)
+                    {
                         writers.add(writersElements.get(i).getText());
                     }
+                
                     break;
                 }
+                
+                else if(credit.findElement(By.cssSelector("a")).getText().equalsIgnoreCase("Writers")){
+                    // traverse list of writers on page to add to writers list
+                    List<WebElement> writersElements2 = credit.findElements(By.cssSelector("a"));
+                  
+                    for(int i =1 ; i <writersElements2.size()-1 ; i++)
+                    {
+                        writers.add(writersElements2.get(i).getText());
+                    }
+                
+                    break;
+                }
+               
             }catch(NoSuchElementException e){}
         }
 
